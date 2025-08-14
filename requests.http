@@ -1,0 +1,140 @@
+# Contact Identification API Test Requests
+# This file contains HTTP requests for testing the contact identification API
+# You can use REST Client extension in VS Code to execute these requests
+
+### 1. Create a new primary contact
+# Use case: First time user with both email and phone
+# Expected result: Creates a new primary contact and returns it
+POST http://localhost:8080/identify
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "phoneNumber": "+1234567890"
+}
+
+### 2. Identify with only email
+# Use case: User provides only email
+# Expected result: Creates a new primary contact if email doesn't exist, or returns existing contact info
+POST http://localhost:8080/identify
+Content-Type: application/json
+
+{
+  "email": "john@example.com"
+}
+
+### 3. Identify with only phone number
+# Use case: User provides only phone number
+# Expected result: Creates a new primary contact if phone doesn't exist, or returns existing contact info
+POST http://localhost:8080/identify
+Content-Type: application/json
+
+{
+  "phoneNumber": "+1234567890"
+}
+
+### 4. Create a secondary contact (when primary exists with different email)
+# Use case: User logs in with same phone but different email
+# Expected result: Creates a secondary contact linked to primary and returns consolidated contact info
+POST http://localhost:8080/identify
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "phoneNumber": "+1234567890"
+}
+
+### 5. Create a secondary contact (when primary exists with different phone)
+# Use case: User logs in with same email but different phone
+# Expected result: Creates a secondary contact linked to primary and returns consolidated contact info
+POST http://localhost:8080/identify
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "phoneNumber": "+9876543210"
+}
+
+### 6. Identify with multiple existing contacts (consolidation scenario)
+# Use case: Multiple contacts exist that need to be linked
+# This is a sequence of requests to demonstrate the consolidation logic
+
+# 6.1 First create one primary contact with email only
+POST http://localhost:8080/identify
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "phoneNumber": null
+}
+
+### 6.2 Then create another primary contact with different email
+POST http://localhost:8080/identify
+Content-Type: application/json
+
+{
+  "email": "john.work@example.com",
+  "phoneNumber": null
+}
+
+### 6.3 Now link them together with a request containing both emails
+# Expected result: One contact becomes primary, others become secondary, returns consolidated info
+POST http://localhost:8080/identify
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "phoneNumber": "+1234567890"
+}
+
+### 7. Error case - no email or phone number provided
+# Use case: Invalid request with no identifiers
+# Expected result: Returns 400 Bad Request error
+POST http://localhost:8080/identify
+Content-Type: application/json
+
+{
+  "email": null,
+  "phoneNumber": null
+}
+
+### 8. Complex consolidation scenario
+# Use case: Multiple contacts with overlapping emails and phones
+# This sequence demonstrates how the system handles complex linking
+
+# 8.1 Create first contact
+POST http://localhost:8080/identify
+Content-Type: application/json
+
+{
+  "email": "jane@example.com",
+  "phoneNumber": "+1122334455"
+}
+
+### 8.2 Create second contact with different email, same phone
+POST http://localhost:8080/identify
+Content-Type: application/json
+
+{
+  "email": "jane.work@example.com",
+  "phoneNumber": "+1122334455"
+}
+
+### 8.3 Create third contact with first email, different phone
+POST http://localhost:8080/identify
+Content-Type: application/json
+
+{
+  "email": "jane@example.com",
+  "phoneNumber": "+5544332211"
+}
+
+### 8.4 Final consolidation request
+# Expected result: All contacts are linked with oldest as primary
+POST http://localhost:8080/identify
+Content-Type: application/json
+
+{
+  "email": "jane.personal@example.com",
+  "phoneNumber": "+5544332211"
+}
