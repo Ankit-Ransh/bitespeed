@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "allowJs": true,
+        "checkJs": true,
+        "esModuleInterop": true,
+        "module": "NodeNext",
+        "target": "es2017",
+        "sourceMap": true,
+        "alwaysStrict": true,
+        "strictNullChecks": true
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "**/*.spec.ts"
+    ]
+}

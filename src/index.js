@@ -1,20 +1,11 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";    
-dotenv.config();
+import 'dotenv/config';
+import { server } from "./routes/server.js";
+import { port } from './config/config.js';
+import { Constants } from './utils/constants.js';
+import { contactRouter } from './routes/contact.js';
 
-const app = express();
+server.use(`${Constants.ROUTES.identifyContact}`, contactRouter);
 
-app.use(cors());
-app.use(express.json());
-
-app.get("/", (req, res) => {
-    res.status(200).json({
-        status: "ok",
-        message: "Welcome to the Bitespeed Identity Reconciliation API"
-    })
-});
-
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`Server running on port ${port}`);
-})
+});

@@ -20,8 +20,14 @@
     },
     "homepage": "https://github.com/Ankit-Ransh/bitespeed#readme",
     "dependencies": {
+        "cookie-parser": "^1.4.7",
         "cors": "^2.8.5",
         "dotenv": "^17.2.1",
-        "express": "^5.1.0"
+        "express": "^5.1.0",
+        "pg": "^8.16.3"
+    },
+    "devDependencies": {
+        "ts-node": "^10.9.2",
+        "typescript": "^5.8.3"
     }
 }
