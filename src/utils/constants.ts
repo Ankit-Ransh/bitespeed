@@ -1,0 +1,19 @@
+enum DB_TIMEOUTS {
+    CONNECTION_TIMEOUT = 10000,
+    QUERY_TIMEOUT = 10000,
+    LOCK_TIMEOUT = 10000,
+    IDLE_TIMEOUT = 10000,
+    POSTGRESQL_DB_TIMEOUT = 10000,
+    CACHE_DB_REDIS_TIMEOUT = 600,
+    QUEUE_DB_REDIS_TIMEOUT = 10000,
+    VERY_SHORT_CACHE_DB_REDIS_TIMEOUT = 300,
+    SHORT_CACHE_DB_REDIS_TIMEOUT = 3600,
+    LONG_CACHE_DB_REDIS_TIMEOUT = 86400,
+};
+
+export class Constants {
+    static readonly PORT = process.env.port;
+    static readonly DB_PORT = '5432';
+    static readonly SERVER_URL = `127.0.0.1:${this.PORT}`;
+    static readonly DB_TIMEOUTS = DB_TIMEOUTS;
+};
