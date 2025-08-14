@@ -1,5 +1,6 @@
 import postgres from "pg"; const { Pool } = postgres;
 import { dbUsername, dbHost, dbName, dbPassword, dbPort } from "./config.js";
+import { Constants } from "../utils/constants.js";
 
 const pool = new Pool({
     user: dbUsername,
