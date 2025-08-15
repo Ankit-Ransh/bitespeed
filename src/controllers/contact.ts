@@ -49,7 +49,7 @@ export const identifyContact = async (req: Request, res: Response): Promise<void
                 secondaryContactIds: []
             };
 
-            return res.status(200).json({ contact: response });
+            res.status(200).json({ contact: response });
         }
 
         // Find all related contacts (primary and secondary)
@@ -167,13 +167,13 @@ export const identifyContact = async (req: Request, res: Response): Promise<void
                 secondaryContactIds
             };
 
-            return res.status(200).json({ contact: response });
+            res.status(200).json({ contact: response });
         } else {
             // This should not happen, but just in case
-            return res.status(500).json({ error: 'Failed to identify primary contact' });
+            res.status(500).json({ error: 'Failed to identify primary contact' });
         }
     } catch (error) {
         console.error('Error in identifyContact:', error);
-        return res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: 'Internal server error' });
     }
 }
