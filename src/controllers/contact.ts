@@ -1,7 +1,31 @@
+/**
+ * Contact Controller
+ * 
+ * This module handles the contact identification logic for the API.
+ * It processes requests to identify and link contacts based on email and phone number.
+ * 
+ * @author Ankit Anand
+ * @module controllers/contact
+ */
+
 import { Request, Response } from 'express';
 import { ContactModel } from '../models/contact.js';
 import { Contact, ContactResponse, IdentifyRequest, LinkPrecedence } from './types.js';
 
+/**
+ * Identifies and links contacts based on email and phone number
+ * 
+ * This function implements the core contact identification logic:
+ * 1. Searches for contacts matching the provided email or phone number
+ * 2. If no matches found, creates a new primary contact
+ * 3. If matches found, determines the oldest contact as primary
+ * 4. Links any other contacts as secondary to the primary contact
+ * 5. Returns consolidated contact information
+ * 
+ * @param req - Express request object containing email and/or phoneNumber
+ * @param res - Express response object
+ * @returns Promise resolving to void
+ */
 export const identifyContact = async (req: Request, res: Response): Promise<void> => {
     try {
         const { email, phoneNumber } = req.body as IdentifyRequest;
@@ -25,8 +49,7 @@ export const identifyContact = async (req: Request, res: Response): Promise<void
                 secondaryContactIds: []
             };
 
-            res.status(200).json({ contact: response });
-            return;
+            return res.status(200).json({ contact: response });
         }
 
         // Find all related contacts (primary and secondary)
@@ -144,14 +167,13 @@ export const identifyContact = async (req: Request, res: Response): Promise<void
                 secondaryContactIds
             };
 
-            res.status(200).json({ contact: response });
+            return res.status(200).json({ contact: response });
         } else {
             // This should not happen, but just in case
-            res.status(500).json({ error: 'Failed to identify primary contact' });
+            return res.status(500).json({ error: 'Failed to identify primary contact' });
         }
     } catch (error) {
         console.error('Error in identifyContact:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ error: 'Internal server error' });
     }
-
 }
