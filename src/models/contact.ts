@@ -1,10 +1,28 @@
+/**
+ * Contact Model
+ * 
+ * This module provides database operations for the contacts table using raw PostgreSQL queries.
+ * It handles creating, finding, and updating contact records in the database.
+ * 
+ * @author Ankit Anand
+ * @module models/contact
+ */
+
 import { pool } from '../config/postgres.js';
 import { Contact, LinkPrecedence } from '../controllers/types.js';
 
 
+/**
+ * ContactModel class provides methods for interacting with the contacts table in the database.
+ * It implements all database operations using raw PostgreSQL queries.
+ */
 export class ContactModel {
     /**
      * Find contacts by email or phone number
+     * 
+     * @param email - The email to search for
+     * @param phoneNumber - The phone number to search for
+     * @returns Promise resolving to an array of Contact objects matching either email or phone number
      */
     static async findByEmailOrPhone(email?: string | null, phoneNumber?: string | null): Promise<Contact[]> {
         const conditions: string[] = [];
@@ -48,7 +66,10 @@ export class ContactModel {
     }
     
     /**
-     * Create a new contact
+     * Create a new contact in the database
+     * 
+     * @param data - Object containing contact data (email, phoneNumber, linkedId, linkPrecedence)
+     * @returns Promise resolving to the newly created Contact object
      */
     static async create(data: {
         email?: string | null;
@@ -89,14 +110,20 @@ export class ContactModel {
     }
     
     /**
-     * Find contacts by primary ID or linked to primary ID
+     * Find contacts by primary IDs or linked to these primary IDs
+     * 
+     * @param primaryIds - Array of primary contact IDs to search for
+     * @returns Promise resolving to an array of Contact objects that match the primary IDs or are linked to the primary IDs
      */
     static async findByPrimaryIds(primaryIds: number[]): Promise<Contact[]> {
         if (primaryIds.length === 0) {
             return [];
         }
         
-        const placeholders = primaryIds.map((_, i) => `$${i + 1}`).join(', ');
+        // Create separate placeholders for each part of the OR condition
+        const idPlaceholders = primaryIds.map((_, i) => `$${i + 1}`).join(', ');
+        const linkedIdPlaceholders = primaryIds.map((_, i) => `$${i + primaryIds.length + 1}`).join(', ');
+        
         const query = `
             SELECT 
                 id, 
@@ -108,7 +135,7 @@ export class ContactModel {
                 updated_at as "updatedAt", 
                 deleted_at as "deletedAt"
             FROM contacts 
-            WHERE (id IN (${placeholders}) OR linked_id IN (${placeholders}))
+            WHERE (id IN (${idPlaceholders}) OR linked_id IN (${linkedIdPlaceholders}))
                 AND deleted_at IS NULL
             ORDER BY created_at ASC
         `;
@@ -119,7 +146,10 @@ export class ContactModel {
     }
     
     /**
-     * Find contacts by primary ID and its linked contacts
+     * Find a contact by primary ID and all contacts linked to it
+     * 
+     * @param primaryId - The primary contact ID to search for
+     * @returns Promise resolving to an array of Contact objects including the primary and all linked contacts
      */
     static async findByPrimaryId(primaryId: number): Promise<Contact[]> {
         const query = `
@@ -142,7 +172,11 @@ export class ContactModel {
     }
     
     /**
-     * Update a contact
+     * Update a contact in the database
+     * 
+     * @param id - The ID of the contact to update
+     * @param data - Object containing contact data to update
+     * @returns Promise resolving to the updated Contact object
      */
     static async update(id: number, data: {
         linkedId?: number | null;

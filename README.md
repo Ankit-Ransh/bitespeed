@@ -2,6 +2,8 @@
 
 This is a solution for the Bitespeed Backend Task: Identity Reconciliation. The service provides an API endpoint that helps identify and keep track of a customer's identity across multiple purchases.
 
+**Author:** Ankit Anand
+
 ## Tech Stack
 
 - Node.js with TypeScript
